@@ -1,0 +1,695 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Summary of Property Listing — FINN</title>
+
+  <style>
+    @font-face { font-family: 'FINN Type'; src: url('fonts/FINNType-Light.otf') format('opentype'); font-weight: 300; font-style: normal; }
+    @font-face { font-family: 'FINN Type'; src: url('fonts/FINNType-Regular.otf') format('opentype'); font-weight: 400; font-style: normal; }
+    @font-face { font-family: 'FINN Type'; src: url('fonts/FINNType-Medium.otf') format('opentype'); font-weight: 500; font-style: normal; }
+    @font-face { font-family: 'FINN Type'; src: url('fonts/FINNType-Bold.otf') format('opentype'); font-weight: 700; font-style: normal; }
+    @font-face { font-family: 'FINN Type'; src: url('fonts/FINNType-Black.otf') format('opentype'); font-weight: 800; font-style: normal; }
+    @font-face { font-family: 'FINN Type'; src: url('fonts/FINNType-Super.otf') format('opentype'); font-weight: 900; font-style: normal; }
+    :root {
+      --finn-blue-light: #06BEFB;
+      --finn-blue-dark: #0063FB;
+      --finn-text: #474445;
+      --finn-grey-bg: #E8EEF4;
+      --finn-white: #FFFFFF;
+      --finn-green: #28CD94;
+      --finn-green-light: #B7FFE4;
+      --finn-cyan-light: #B6F0FF;
+      --finn-blue-ice: #F1F9FF;
+      --finn-coral: #FF5844;
+      --finn-pink: #FFBDC9;
+      --finn-yellow: #FFEC99;
+      --finn-grey-1: #E8EEF4;
+      --finn-grey-2: #DFE4E8;
+      --finn-grey-3: #A6A4A5;
+      --finn-grey-4: #666364;
+      --finn-grey-5: #505052;
+      --finn-grey-6: #353233;
+      --finn-font: 'FINN Type', 'Inter', 'Arial', system-ui, sans-serif;
+      --finn-text-super: clamp(3rem, 6vw, 5.5rem);
+      --finn-text-primary: clamp(2.2rem, 4.5vw, 4rem);
+      --finn-text-secondary: clamp(1.6rem, 3vw, 2.5rem);
+      --finn-text-body: clamp(0.95rem, 1.2vw, 1.25rem);
+      --finn-text-small: clamp(0.75rem, 0.9vw, 0.95rem);
+      --finn-tracking-headline: -0.01em;
+      --finn-tracking-body: 0em;
+      --finn-leading-headline: 1.1;
+      --finn-leading-body: 1.5;
+      --finn-space-xs: clamp(0.25rem, 0.5vw, 0.5rem);
+      --finn-space-sm: clamp(0.5rem, 1vw, 1rem);
+      --finn-space-md: clamp(1rem, 2vw, 2rem);
+      --finn-space-lg: clamp(2rem, 4vw, 4rem);
+      --finn-space-xl: clamp(3rem, 6vw, 6rem);
+      --finn-radius-sm: 0.375rem;
+      --finn-radius-md: 0.75rem;
+      --finn-radius-lg: 1.25rem;
+      --finn-ease: cubic-bezier(0.25, 0.1, 0.25, 1);
+      --finn-duration: 400ms;
+      --slide-bg: var(--finn-blue-light);
+      --slide-text: var(--finn-white);
+      --slide-accent: var(--finn-blue-dark);
+      --slide-muted: var(--finn-cyan-light);
+    }
+
+    [data-theme="blue"] {
+      --slide-bg: var(--finn-blue-light);
+      --slide-text: var(--finn-white);
+      --slide-accent: var(--finn-blue-dark);
+      --slide-muted: var(--finn-cyan-light);
+    }
+    [data-theme="grey"] {
+      --slide-bg: var(--finn-grey-bg);
+      --slide-text: var(--finn-text);
+      --slide-accent: var(--finn-blue-dark);
+      --slide-muted: var(--finn-grey-3);
+    }
+    [data-theme="white"] {
+      --slide-bg: var(--finn-white);
+      --slide-text: var(--finn-text);
+      --slide-accent: var(--finn-blue-light);
+      --slide-muted: var(--finn-grey-3);
+    }
+    [data-theme="dark-blue"] {
+      --slide-bg: var(--finn-blue-dark);
+      --slide-text: var(--finn-white);
+      --slide-accent: var(--finn-blue-light);
+      --slide-muted: var(--finn-cyan-light);
+    }
+    [data-theme="ice"] {
+      --slide-bg: var(--finn-blue-ice);
+      --slide-text: var(--finn-text);
+      --slide-accent: var(--finn-blue-dark);
+      --slide-muted: var(--finn-grey-2);
+    }
+
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    html { font-size: 16px; scroll-behavior: smooth; }
+    body {
+      font-family: var(--finn-font);
+      font-weight: 400;
+      background: var(--finn-grey-6);
+      color: var(--slide-text);
+      overflow: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .deck { position: relative; width: 100vw; height: 100vh; height: 100dvh; }
+
+    .slide {
+      position: absolute; inset: 0;
+      width: 100%; height: 100vh; height: 100dvh;
+      overflow: hidden;
+      display: flex; flex-direction: column; justify-content: center; align-items: center;
+      padding: var(--finn-space-lg);
+      background: var(--slide-bg);
+      color: var(--slide-text);
+      opacity: 0; visibility: hidden;
+      transition: opacity var(--finn-duration) var(--finn-ease), visibility var(--finn-duration) var(--finn-ease);
+    }
+    .slide.active { opacity: 1; visibility: visible; z-index: 1; }
+
+    .slide h1 {
+      font-family: var(--finn-font);
+      font-weight: 900;
+      font-size: clamp(2rem, 4vw, 3.5rem);
+      letter-spacing: var(--finn-tracking-headline);
+      line-height: var(--finn-leading-headline);
+      max-width: 18ch;
+      text-align: center;
+    }
+    .slide h1.primary {
+      font-size: var(--finn-text-primary);
+      font-weight: 800;
+    }
+    .slide h2 {
+      font-family: var(--finn-font);
+      font-weight: 700;
+      font-size: var(--finn-text-secondary);
+      letter-spacing: var(--finn-tracking-headline);
+      line-height: var(--finn-leading-headline);
+      max-width: 28ch;
+      margin-bottom: var(--finn-space-sm);
+    }
+    .slide h3 {
+      font-family: var(--finn-font);
+      font-weight: 700;
+      font-size: clamp(1.1rem, 1.6vw, 1.4rem);
+      margin-bottom: var(--finn-space-xs);
+    }
+    .slide p, .slide li {
+      font-family: var(--finn-font);
+      font-weight: 400;
+      font-size: var(--finn-text-body);
+      letter-spacing: var(--finn-tracking-body);
+      line-height: var(--finn-leading-body);
+      max-width: 55ch;
+    }
+    .slide .subtitle {
+      font-size: clamp(1.1rem, 2vw, 1.6rem);
+      font-weight: 500;
+      opacity: 0.85;
+      margin-top: var(--finn-space-sm);
+    }
+    .slide .payoff {
+      font-size: var(--finn-text-body);
+      font-weight: 500;
+      opacity: 0.8;
+      margin-top: var(--finn-space-md);
+    }
+    .slide .label {
+      font-size: var(--finn-text-small);
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--slide-accent);
+    }
+    .slide .caption { font-size: var(--finn-text-small); font-weight: 300; opacity: 0.7; }
+
+    .slide-content {
+      display: flex; flex-direction: column; align-items: center;
+      gap: var(--finn-space-md); text-align: center;
+      width: 100%; max-width: 1200px;
+    }
+    .slide-content.left { align-items: flex-start; text-align: left; }
+
+    .split {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: var(--finn-space-lg); width: 100%; max-width: 1200px; align-items: center;
+    }
+    .grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--finn-space-md); width: 100%; max-width: 1200px; }
+    .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--finn-space-md); width: 100%; max-width: 1200px; }
+    .grid-4 { display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--finn-space-md); width: 100%; max-width: 1200px; }
+
+    .card {
+      background: color-mix(in srgb, var(--slide-text) 6%, transparent);
+      border-radius: var(--finn-radius-md);
+      padding: var(--finn-space-md);
+      text-align: left;
+    }
+
+    .finn-logo {
+      position: absolute;
+      top: var(--finn-space-md);
+      right: var(--finn-space-md);
+      height: clamp(28px, 3vw, 44px);
+    }
+
+    .finniver-bg { position: absolute; inset: 0; overflow: hidden; pointer-events: none; z-index: 0; }
+    .finniver-bg .shape { position: absolute; border: 2.5px solid rgba(255,255,255,0.2); }
+    .finniver-bg .shape.square { border-radius: var(--finn-radius-sm); }
+    .finniver-bg .shape.circle { border-radius: 50%; }
+    .finniver-bg .shape.quarter { border: none; border-radius: 0 100% 0 0; background: rgba(255,255,255,0.08); }
+
+    .accent { color: var(--slide-accent); }
+    .divider { width: 3rem; height: 3px; background: var(--slide-accent); border-radius: 2px; margin-top: var(--finn-space-sm); margin-bottom: var(--finn-space-sm); }
+
+    .progress { position: fixed; top: 0; left: 0; height: 3px; background: var(--finn-blue-dark); transition: width var(--finn-duration) var(--finn-ease); z-index: 100; }
+
+    .reveal {
+      opacity: 0; transform: translateY(1.2rem);
+      transition: opacity var(--finn-duration) var(--finn-ease), transform var(--finn-duration) var(--finn-ease);
+    }
+    .slide.active .reveal { opacity: 1; transform: translateY(0); }
+    .slide.active .reveal:nth-child(2) { transition-delay: 80ms; }
+    .slide.active .reveal:nth-child(3) { transition-delay: 160ms; }
+    .slide.active .reveal:nth-child(4) { transition-delay: 240ms; }
+    .slide.active .reveal:nth-child(5) { transition-delay: 320ms; }
+    .slide.active .reveal:nth-child(6) { transition-delay: 400ms; }
+    .slide.active .reveal:nth-child(7) { transition-delay: 480ms; }
+    .slide.active .reveal:nth-child(8) { transition-delay: 560ms; }
+
+    @media (prefers-reduced-motion: reduce) { .reveal { opacity: 1; transform: none; transition: none; } }
+
+    .slide-counter {
+      position: fixed; bottom: var(--finn-space-sm); left: var(--finn-space-md);
+      font-size: var(--finn-text-small); color: rgba(255,255,255,0.5);
+      z-index: 100; font-variant-numeric: tabular-nums;
+    }
+
+    .slide > .slide-content, .slide > .split, .slide > .grid-3, .slide > .grid-2, .slide > .grid-4 {
+      position: relative; z-index: 1;
+    }
+
+    /* =========================================
+       CUSTOM STYLES FOR THIS PRESENTATION
+       ========================================= */
+
+    /* Threat cards */
+    .threat-cards { display: flex; flex-direction: column; gap: var(--finn-space-sm); }
+    .threat-card {
+      background: rgba(255,88,68,0.08);
+      border-left: 4px solid var(--finn-coral);
+      padding: var(--finn-space-sm) var(--finn-space-md);
+      border-radius: 0 var(--finn-radius-sm) var(--finn-radius-sm) 0;
+    }
+    .threat-card .threat-label {
+      font-size: var(--finn-text-small);
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--finn-coral);
+      margin-bottom: 4px;
+    }
+
+    /* Mockup */
+    .mockup-frame {
+      background: var(--finn-white);
+      border-radius: var(--finn-radius-md);
+      border: 1px solid var(--finn-grey-2);
+      overflow: hidden;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.08);
+    }
+    .mockup-browser-bar {
+      background: var(--finn-grey-1);
+      padding: 8px 14px;
+      display: flex; align-items: center; gap: 6px;
+    }
+    .mockup-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--finn-grey-3); }
+    .mockup-url {
+      flex: 1; background: white; border-radius: 4px;
+      padding: 3px 10px; font-size: 11px; color: var(--finn-grey-4); margin-left: 6px;
+    }
+    .mockup-content { padding: 20px; }
+    .mockup-tabs { display: flex; border-bottom: 2px solid var(--finn-grey-2); margin-bottom: 16px; }
+    .mockup-tab {
+      padding: 8px 16px; font-size: 12px; font-weight: 600;
+      color: var(--finn-grey-4); border-bottom: 2px solid transparent; margin-bottom: -2px;
+    }
+    .mockup-tab.active { color: var(--finn-blue-dark); border-bottom-color: var(--finn-blue-dark); }
+    .mockup-ai-badge {
+      display: inline-flex; align-items: center; gap: 5px;
+      background: var(--finn-cyan-light); color: var(--finn-blue-dark);
+      font-size: 10px; font-weight: 600; padding: 4px 10px; border-radius: 20px; margin-bottom: 14px;
+    }
+    .mockup-section-title { font-size: 13px; font-weight: 700; margin-bottom: 8px; color: var(--finn-text); }
+    .mockup-pills { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 14px; }
+    .pill {
+      font-size: 10px; padding: 4px 8px; border-radius: 5px; font-weight: 500;
+      display: flex; align-items: center; gap: 3px;
+    }
+    .pill.red { background: #FDECEA; color: #DA2400; }
+    .pill.yellow { background: #FFF8E1; color: #8B6914; }
+    .pill.green { background: var(--finn-green-light); color: #1a7a3a; }
+    .mockup-cta {
+      background: var(--finn-blue-dark); color: white; border: none;
+      padding: 8px 16px; border-radius: var(--finn-radius-sm);
+      font-size: 12px; font-weight: 600; width: 100%; text-align: center;
+    }
+
+    /* Phone-style mockup */
+    .mockup-phone {
+      background: var(--finn-grey-1);
+      border-radius: var(--finn-radius-lg);
+      padding: 20px;
+      font-size: 12px;
+      color: var(--finn-text);
+      box-shadow: 0 8px 30px rgba(0,0,0,0.08);
+      max-height: 80vh;
+      overflow: hidden;
+    }
+    .phone-section-title {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--finn-text);
+      margin-bottom: 10px;
+    }
+    .phone-ai-disclaimer {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      background: white;
+      border-radius: var(--finn-radius-sm);
+      padding: 10px 12px;
+      margin-bottom: 14px;
+      font-size: 11px;
+      color: var(--finn-text);
+      border: 1px solid var(--finn-grey-2);
+    }
+    .phone-ai-icon {
+      color: var(--finn-blue-dark);
+      font-size: 16px;
+      line-height: 1;
+    }
+    .phone-highlight-item {
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+      margin-bottom: 12px;
+      font-size: 11px;
+      line-height: 1.5;
+      color: var(--finn-text);
+    }
+    .phone-thumb {
+      width: 56px;
+      height: 56px;
+      border-radius: var(--finn-radius-sm);
+      background: linear-gradient(135deg, var(--finn-grey-3) 0%, var(--finn-grey-2) 100%);
+      flex-shrink: 0;
+    }
+    .phone-page-link {
+      color: var(--finn-blue-dark);
+      font-size: 11px;
+      font-weight: 600;
+    }
+    .phone-accordion {
+      background: white;
+      border-radius: var(--finn-radius-sm);
+      margin-bottom: 6px;
+      border-left: 3px solid var(--finn-yellow);
+      overflow: hidden;
+    }
+    .phone-accordion-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 12px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--finn-text);
+    }
+    .chevron {
+      font-size: 16px;
+      color: var(--finn-grey-3);
+    }
+    .phone-accordion-body {
+      padding: 0 12px 10px;
+      font-size: 11px;
+      line-height: 1.6;
+      color: var(--finn-grey-4);
+    }
+
+    /* Flow comparison */
+    .flow-box {
+      border-radius: var(--finn-radius-md); padding: var(--finn-space-md);
+      display: flex; flex-direction: column; text-align: left;
+    }
+    .flow-box.old { background: rgba(255,88,68,0.06); border: 2px solid rgba(255,88,68,0.2); }
+    .flow-box.new { background: rgba(40,205,148,0.06); border: 2px solid rgba(40,205,148,0.2); }
+    .flow-box h3 { margin-bottom: var(--finn-space-sm); }
+    .flow-box.old h3 { color: var(--finn-coral); }
+    .flow-box.new h3 { color: var(--finn-green); }
+    .flow-steps { display: flex; flex-direction: column; gap: 10px; }
+    .flow-step {
+      display: flex; align-items: flex-start; gap: 10px;
+      font-size: var(--finn-text-body); line-height: 1.5;
+    }
+    .flow-num {
+      width: 24px; height: 24px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 12px; font-weight: 700; flex-shrink: 0; margin-top: 2px;
+    }
+    .flow-box.old .flow-num { background: rgba(255,88,68,0.15); color: var(--finn-coral); }
+    .flow-box.new .flow-num { background: rgba(40,205,148,0.15); color: var(--finn-green); }
+
+    /* Benefit cards */
+    .benefit-card {
+      background: color-mix(in srgb, var(--slide-text) 6%, transparent);
+      border-radius: var(--finn-radius-md);
+      padding: var(--finn-space-md);
+      text-align: left;
+    }
+    .benefit-num {
+      font-size: clamp(2rem, 4vw, 3rem);
+      font-weight: 900;
+      color: var(--finn-blue-dark);
+      line-height: 1;
+      margin-bottom: var(--finn-space-xs);
+    }
+
+    /* Timeline */
+    .timeline { display: flex; flex-direction: column; position: relative; padding-left: 50px; }
+    .timeline::before {
+      content: ''; position: absolute; left: 18px; top: 10px; bottom: 10px;
+      width: 3px; background: var(--finn-blue-dark); border-radius: 2px; opacity: 0.2;
+    }
+    .timeline-item { display: flex; gap: 20px; padding: 16px 0; position: relative; }
+    .timeline-dot {
+      position: absolute; left: -50px;
+      width: 38px; height: 38px; border-radius: 50%;
+      background: var(--finn-blue-dark); color: white;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 700; font-size: 15px; z-index: 1;
+    }
+
+    /* CTA box */
+    .cta-box {
+      background: var(--finn-blue-dark); border-radius: var(--finn-radius-lg);
+      padding: var(--finn-space-lg); color: white; text-align: center;
+    }
+    .cta-box h3 { font-size: var(--finn-text-secondary); font-weight: 800; margin-bottom: var(--finn-space-sm); color: white; }
+    .cta-box p { opacity: 0.85; margin-bottom: var(--finn-space-md); color: white; max-width: 40ch; margin-left: auto; margin-right: auto; }
+    .cta-button {
+      display: inline-block; background: white; color: var(--finn-blue-dark);
+      padding: 12px 32px; border-radius: var(--finn-radius-md);
+      font-size: var(--finn-text-body); font-weight: 700; text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="progress" id="progress"></div>
+  <div class="slide-counter" id="counter"></div>
+
+  <main class="deck" id="deck">
+
+    <!-- SLIDE 1: Title (blue) -->
+    <section class="slide active" data-theme="blue">
+      <div class="finniver-bg">
+        <div class="shape quarter" style="width:140px;height:140px;bottom:-30px;left:40px;"></div>
+        <div class="shape square" style="width:50px;height:50px;top:15%;right:12%;border-radius:6px;"></div>
+        <div class="shape circle" style="width:70px;height:70px;bottom:22%;right:8%;"></div>
+        <div class="shape square" style="width:35px;height:35px;top:60%;left:8%;border-radius:4px;"></div>
+      </div>
+      <div class="slide-content">
+        <h1 class="reveal">AI Summary of Property Listing and Condition Report</h1>
+        <p class="subtitle reveal">A collaboration between FINN Real Estate and Aktiv Eiendomsmegling</p>
+        <p class="payoff reveal">The marketplace of opportunities</p>
+      </div>
+      <img class="finn-logo" src="finn-logo.png" alt="FINN">
+    </section>
+
+    <!-- SLIDE 2: The Situation (grey) -->
+    <section class="slide" data-theme="grey">
+      <div class="split">
+        <div>
+          <span class="label reveal">The Situation</span>
+          <h2 class="reveal">Home buyers expect better assistance</h2>
+          <div class="divider reveal"></div>
+          <p class="reveal">FINN is the most important showcase for residential properties. Buyers start their home search with us and increasingly expect better help understanding the information <em>before</em> making major decisions.</p>
+          <p class="reveal" style="margin-top: var(--finn-space-sm);">Today, buyers must navigate to the property's website themselves, download the sales prospectus and condition report, and interpret complex documents on their own.</p>
+        </div>
+        <div class="threat-cards">
+          <div class="threat-card reveal">
+            <div class="threat-label">The Threat</div>
+            <p>Third-party services already offer AI summaries of property information — <strong>completely outside the control of agencies and agents.</strong></p>
+          </div>
+          <div class="threat-card reveal">
+            <div class="threat-label">Growing Adoption</div>
+            <p>Usage of such services is increasing. Buyers receive summarised information without quality assurance or any connection to the agent.</p>
+          </div>
+          <div class="threat-card reveal">
+            <div class="threat-label">Lost Control</div>
+            <p>Without a quality-assured alternative, both the agency and FINN lose the opportunity to shape the buyer's first impression.</p>
+          </div>
+        </div>
+      </div>
+      <img class="finn-logo" src="finn-logo.png" alt="FINN">
+    </section>
+
+    <!-- SLIDE 3: Flow comparison (grey) -->
+    <section class="slide" data-theme="grey">
+      <div class="slide-content">
+        <span class="label reveal">User Flow</span>
+        <h2 class="reveal">From uncontrolled to quality-assured</h2>
+        <div class="grid-2" style="margin-top: var(--finn-space-sm);">
+          <div class="flow-box old reveal">
+            <h3>&#10060; Current threat: Third-party flow</h3>
+            <div class="flow-steps">
+              <div class="flow-step"><div class="flow-num">1</div><span>Buyer finds a property on FINN</span></div>
+              <div class="flow-step"><div class="flow-num">2</div><span>Copies the link to a third-party service</span></div>
+              <div class="flow-step"><div class="flow-num">3</div><span>Service scrapes info from the property's website</span></div>
+              <div class="flow-step"><div class="flow-num">4</div><span>Buyer gets a summary <strong>outside the agent's and agency's control</strong></span></div>
+              <div class="flow-step"><div class="flow-num">5</div><span>Can open the prospectus within the service — <strong>bypasses Aktiv's pages</strong></span></div>
+            </div>
+          </div>
+          <div class="flow-box new reveal">
+            <h3>&#10004; New flow: FINN as guide</h3>
+            <div class="flow-steps">
+              <div class="flow-step"><div class="flow-num">1</div><span>Buyer finds a property on FINN</span></div>
+              <div class="flow-step"><div class="flow-num">2</div><span>Gets an AI summary of risks and highlights directly in the listing</span></div>
+              <div class="flow-step"><div class="flow-num">3</div><span>Clicks through to <strong>Aktiv's website</strong> for the complete prospectus</span></div>
+              <div class="flow-step"><div class="flow-num">4</div><span>Downloads the full prospectus — <strong>traffic stays with the agency</strong></span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <img class="finn-logo" src="finn-logo.png" alt="FINN">
+    </section>
+
+    <!-- SLIDE 4: Benefits (white) -->
+    <section class="slide" data-theme="white">
+      <div class="slide-content">
+        <span class="label reveal">Benefits</span>
+        <h2 class="reveal">What Aktiv gains from the collaboration</h2>
+        <div class="grid-4" style="margin-top: var(--finn-space-sm);">
+          <div class="benefit-card reveal">
+            <div class="benefit-num">01</div>
+            <h3>Traffic Preservation</h3>
+            <p>The sales prospectus remains Aktiv's. FINN does not replace the agent's own pages, but serves as an effective gateway to them.</p>
+          </div>
+          <div class="benefit-card reveal">
+            <div class="benefit-num">02</div>
+            <h3>Higher Quality Leads</h3>
+            <p>Buyers who already understand the risks and key facts about a property are more ready to make decisions when they contact the agent.</p>
+          </div>
+          <div class="benefit-card reveal">
+            <div class="benefit-num">03</div>
+            <h3>Fewer Disputes and Complaints</h3>
+            <p>When buyers have the right expectations early on, the risk of post-sale disputes and complaints is significantly reduced.</p>
+          </div>
+          <div class="benefit-card reveal">
+            <div class="benefit-num">04</div>
+            <h3>Clear Positioning</h3>
+            <p>Collaborating on transparency and better buyer guidance strengthens Aktiv's reputation as a professional and innovative agency.</p>
+          </div>
+        </div>
+      </div>
+      <img class="finn-logo" src="finn-logo.png" alt="FINN">
+    </section>
+
+    <!-- SLIDE 5: The Solution (white, split with screenshot) -->
+    <section class="slide" data-theme="white">
+      <div class="split">
+        <div>
+          <span class="label reveal">The Solution</span>
+          <h2 class="reveal">AI summary directly in the FINN listing</h2>
+          <div class="divider reveal"></div>
+          <div style="display:flex;flex-direction:column;gap:14px;margin-top:var(--finn-space-sm);">
+            <p class="reveal"><strong style="color:var(--finn-blue-dark);">Highlights surfaced</strong> — The property's strengths and opportunities are brought to the buyer's attention</p>
+            <p class="reveal"><strong style="color:var(--finn-blue-dark);">Direct link to Aktiv</strong> — A clear CTA sends the buyer to Aktiv's pages for the complete prospectus</p>
+            <p class="reveal"><strong style="color:var(--finn-blue-dark);">Things you should know</strong> — Key findings from the condition report presented clearly with detailed explanations</p>
+            <p class="reveal"><strong style="color:var(--finn-blue-dark);">Limited view</strong> — FINN only shows the summary — the full prospectus remains with the agency</p>
+          </div>
+        </div>
+        <div class="reveal">
+          <img src="oppsummert.png" alt="Highlights from the property listing and Things you should know" style="width:50%;border-radius:var(--finn-radius-md);box-shadow:0 8px 30px rgba(0,0,0,0.08);">
+        </div>
+      </div>
+      <img class="finn-logo" src="finn-logo.png" alt="FINN">
+    </section>
+
+    <!-- SLIDE 6: Next Steps / Demo time (grey, split) -->
+    <section class="slide" data-theme="grey">
+      <div class="split">
+        <div>
+          <span class="label reveal">Next Steps</span>
+          <h2 class="reveal">Controlled rollout</h2>
+          <div class="divider reveal"></div>
+          <div class="timeline reveal" style="margin-top: var(--finn-space-md);">
+            <div class="timeline-item">
+              <div class="timeline-dot">1</div>
+              <div>
+                <h3>Pilot with Aktiv</h3>
+                <p>Controlled launch with selected properties to test and optimise the solution together.</p>
+              </div>
+            </div>
+            <div class="timeline-item">
+              <div class="timeline-dot">2</div>
+              <div>
+                <h3>Clear Framework</h3>
+                <p>Agreement on how data is used and presented. Full transparency and control for Aktiv.</p>
+              </div>
+            </div>
+            <div class="timeline-item">
+              <div class="timeline-dot">3</div>
+              <div>
+                <h3>Joint Measurement</h3>
+                <p>Together we measure lead quality, user experience, and conversion to Aktiv's pages.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="reveal">
+          <div class="cta-box">
+            <h3>Let's build this together</h3>
+            <div class="cta-button">Demo time!</div>
+          </div>
+        </div>
+      </div>
+      <img class="finn-logo" src="finn-logo.png" alt="FINN">
+    </section>
+
+    <!-- SLIDE 7: Closing (blue) -->
+    <section class="slide" data-theme="blue">
+      <div class="finniver-bg">
+        <div class="shape quarter" style="width:160px;height:160px;top:-30px;right:60px;transform:rotate(180deg);"></div>
+        <div class="shape square" style="width:40px;height:40px;bottom:25%;left:10%;border-radius:4px;"></div>
+        <div class="shape circle" style="width:55px;height:55px;top:35%;left:18%;"></div>
+        <div class="shape square" style="width:65px;height:65px;bottom:12%;right:15%;border-radius:6px;background:var(--finn-pink);border:none;opacity:0.15;"></div>
+      </div>
+      <div class="slide-content">
+      </div>
+      <img class="finn-logo" src="finn-logo.png" alt="FINN">
+    </section>
+
+  </main>
+
+  <script>
+    class FINNDeck {
+      constructor() {
+        this.slides = [...document.querySelectorAll('.slide')];
+        this.current = 0;
+        this.total = this.slides.length;
+        this.transitioning = false;
+        this.progress = document.getElementById('progress');
+        this.counter = document.getElementById('counter');
+        this.bindEvents();
+        this.updateUI();
+      }
+      bindEvents() {
+        document.addEventListener('keydown', (e) => {
+          if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ') { e.preventDefault(); this.next(); }
+          if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') { e.preventDefault(); this.prev(); }
+          if (e.key === 'Home') { e.preventDefault(); this.goTo(0); }
+          if (e.key === 'End') { e.preventDefault(); this.goTo(this.total - 1); }
+        });
+        let wheelTimeout;
+        document.addEventListener('wheel', (e) => {
+          e.preventDefault();
+          clearTimeout(wheelTimeout);
+          wheelTimeout = setTimeout(() => { if (e.deltaY > 0) this.next(); else this.prev(); }, 50);
+        }, { passive: false });
+        let touchStartY = 0;
+        document.addEventListener('touchstart', (e) => { touchStartY = e.touches[0].clientY; }, { passive: true });
+        document.addEventListener('touchend', (e) => {
+          const diff = touchStartY - e.changedTouches[0].clientY;
+          if (Math.abs(diff) > 50) { if (diff > 0) this.next(); else this.prev(); }
+        }, { passive: true });
+      }
+      next() { if (this.current < this.total - 1 && !this.transitioning) this.goTo(this.current + 1); }
+      prev() { if (this.current > 0 && !this.transitioning) this.goTo(this.current - 1); }
+      goTo(index) {
+        if (index === this.current || this.transitioning) return;
+        this.transitioning = true;
+        this.slides[this.current].classList.remove('active');
+        this.current = index;
+        this.slides[this.current].classList.add('active');
+        this.updateUI();
+        setTimeout(() => { this.transitioning = false; }, 400);
+      }
+      updateUI() {
+        const pct = ((this.current + 1) / this.total) * 100;
+        this.progress.style.width = pct + '%';
+        this.counter.textContent = (this.current + 1) + ' / ' + this.total;
+      }
+    }
+    document.addEventListener('DOMContentLoaded', () => new FINNDeck());
+  </script>
+</body>
+</html>

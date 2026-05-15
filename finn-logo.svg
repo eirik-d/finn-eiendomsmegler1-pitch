@@ -1,0 +1,8 @@
+<svg viewBox="0 0 384 134" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Dark blue quarter-circle shape (left) -->
+  <path d="M0 134V20C0 8.954 8.954 0 20 0h47v134H0Z" fill="#0063FB"/>
+  <path d="M67 0c0 74-60 134-67 134h67V0Z" fill="#0063FB"/>
+  <!-- Cyan rounded rectangle with FINN text (right) -->
+  <rect x="75" y="0" width="309" height="134" rx="18" fill="#06BEFB"/>
+  <text x="229" y="97" fill="#FFFFFF" font-family="'FINN Type','Arial Black',sans-serif" font-size="72" font-weight="900" text-anchor="middle" letter-spacing="8">FINN</text>
+</svg>
